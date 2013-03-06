@@ -48,10 +48,14 @@ server.listen(app.get('port'), function(){
 
 io.sockets.on('connection', function(client) {
 
+  // send all current users
+  users.forEach(function(user) {
+    client.emit('join', user);
+  })
+
   client.on('join', function(name) {
     users.push(name);
     client.broadcast.emit('join', name);
-    client.emit('join', name);
     client.set('name', name);
     console.log("User " + name + " has joined the room");
   });
