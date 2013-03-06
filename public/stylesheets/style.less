@@ -1,3 +1,13 @@
+.clear-floats() {
+  &:after {
+    content: '.';
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+  }
+}
+
 html, body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   height: 100%; width: 100%;
@@ -51,7 +61,7 @@ input, textarea {
   bottom: 0;
   width: 200px;
   padding: 20px;
-  background: #eee;
+  background: rgb(185, 131, 131);
 }
 
 #chat_container {
@@ -72,9 +82,41 @@ ul#chat {
 
 #chat li {
   left: 0; right: 0;
-  padding: 8px;
   border-bottom: 1px solid #ccc;
   display: block;
+  position: relative;
+  .clear-floats();
+
+  & .name {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    padding: 8px;
+    width: 150px;
+    background: rgb(230, 230, 230);
+    text-align: right;
+  }
+
+  & .message {
+    padding: 8px;
+  }
+
+  & .messages {
+    margin-left: 165px;
+  }
+
+  &.status .name {
+    background: white;
+  }
+
+  &.me .name {
+    background: rgb(205, 239, 255);
+  }
+  &.me {
+    background: rgb(244, 252, 255)
+  }
+
 }
 
 #chat_form {

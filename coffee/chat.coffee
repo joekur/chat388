@@ -1,5 +1,6 @@
 server = io.connect('http://localhost:3000')
 my_name = null
+last_message_user_id = null
 
 server.on 'connect', (data) ->
   my_name = prompt("What is your name?")
@@ -8,7 +9,7 @@ server.on 'connect', (data) ->
 
 server.on 'join', (data) ->
   addUser(data)
-  addMessage({name: data.name, message: "has joined the room", status: true})
+  addMessage({name: "", message: "#{data.name} has joined the room", status: true})
 
 server.on 'in room', (data) ->
   addUser(data)
@@ -21,7 +22,7 @@ server.on 'disconnect', (data) ->
   $user = $("ul#users li[data-id=#{data.id}]")
   $user.remove()
   # show that they left in chat
-  addMessage({name: data.name, message: "has left the room.", status: true})
+  addMessage({name: "", message: "#{data.name} has left the room.", status: true})
 
 $('#chat_form').submit ->
   $input = $('#message')
@@ -37,6 +38,13 @@ addUser = (data) ->
   $('ul#users').append("<li data-id='#{data.id}'>#{data.name}</li>")
 
 addMessage = (data) ->
-  $msg = $("<li>#{data.name}: #{data.message}</li>")
-  $msg.addClass('status') if data.status
-  $('ul#chat').append($msg)
+  $msg = $("<div class='message'>#{data.message}</div>")
+  if last_message_user_id == data.user_id
+    $("#chat li").last().find('.messages').append($msg)
+  else
+    $msg_container = $("<li><div class='name'>#{data.name}</div><div class='messages'></div></li>")
+    $msg_container.find('.messages').append($msg)
+    $msg_container.addClass('status') if data.status
+    $msg_container.addClass('me') if data.user_id == server.socket.sessionid
+    $('ul#chat').append($msg_container)
+  last_message_user_id = data.user_id

@@ -48,7 +48,7 @@ textarea:focus {
   bottom: 0;
   width: 200px;
   padding: 20px;
-  background: #eee;
+  background: #b98383;
 }
 #chat_container {
   position: absolute;
@@ -67,9 +67,41 @@ ul#chat {
 #chat li {
   left: 0;
   right: 0;
-  padding: 8px;
   border-bottom: 1px solid #ccc;
   display: block;
+  position: relative;
+}
+#chat li:after {
+  content: '.';
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+#chat li .name {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  padding: 8px;
+  width: 150px;
+  background: #e6e6e6;
+  text-align: right;
+}
+#chat li .message {
+  padding: 8px;
+}
+#chat li .messages {
+  margin-left: 165px;
+}
+#chat li.status .name {
+  background: white;
+}
+#chat li.me .name {
+  background: #cdefff;
+}
+#chat li.me {
+  background: #f4fcff;
 }
 #chat_form {
   position: absolute;
