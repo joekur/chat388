@@ -15,7 +15,6 @@ var app = express();
 var server = http.createServer(app);
 var io = socket.listen(server);
 
-var users = [];
 var clients = {};
 
 app.configure(function(){
@@ -49,28 +48,25 @@ server.listen(app.get('port'), function(){
 
 io.sockets.on('connection', function(client) {
 
-  clients[client.id] = client;
-
   // send all current users
-  users.forEach(function(user) {
-    client.emit('join', user);
-  })
+  for(var id in clients) {
+    client.emit('join', clients[id]);
+  }
 
   client.on('join', function(name) {
     var user_joined = {
       name: name,
       id: client.id
     };
-    users.push(user_joined);
+    clients[client.id] = user_joined;
     client.broadcast.emit('join', user_joined);
-    client.set('name', name);
     console.log("User " + name + " has joined the room");
   });
 
   client.on('disconnect', function() {
-    client.get('name', function(err, name) {
-      client.broadcast.emit('disconnect', {id: client.id, name: name})
-    });
+    user = clients[client.id];
+    client.broadcast.emit('disconnect', user);
+    console.log("User " + user.name + " has left the room");
     delete clients[client.id];
   })
 
