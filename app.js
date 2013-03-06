@@ -16,6 +16,7 @@ var server = http.createServer(app);
 var io = socket.listen(server);
 
 var users = [];
+var clients = {};
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -48,16 +49,29 @@ server.listen(app.get('port'), function(){
 
 io.sockets.on('connection', function(client) {
 
+  clients[client.id] = client;
+
   // send all current users
   users.forEach(function(user) {
     client.emit('join', user);
   })
 
   client.on('join', function(name) {
-    users.push(name);
-    client.broadcast.emit('join', name);
+    var user_joined = {
+      name: name,
+      id: client.id
+    };
+    users.push(user_joined);
+    client.broadcast.emit('join', user_joined);
     client.set('name', name);
     console.log("User " + name + " has joined the room");
   });
+
+  client.on('disconnect', function() {
+    client.get('name', function(err, name) {
+      client.broadcast.emit('disconnect', {id: client.id, name: name})
+    });
+    delete clients[client.id];
+  })
 
 });
