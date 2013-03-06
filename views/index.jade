@@ -1,5 +1,18 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+
+  #top_bar
+    h1 Chat 388
+  
+  #users_container
+    h2 Users
+    ul#users
+
+  #chat_container
+    ul#chat
+
+    form#message
+
+  script(src='/socket.io/socket.io.js')
+  script(src='/javascripts/chat.js')
