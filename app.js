@@ -8,11 +8,14 @@ var express = require('express')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path')
+  , coffeescript = require('connect-coffee-script')
   , socket = require('socket.io');
 
 var app = express();
 var server = http.createServer(app);
 var io = socket.listen(server);
+
+var users = [];
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -24,6 +27,12 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
+  app.use(coffeescript({
+    src: __dirname + '/coffee',
+    dest: __dirname + '/public/javascripts',
+    prefix: '/javascripts/',
+    force: true
+  }))
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
@@ -40,6 +49,10 @@ server.listen(app.get('port'), function(){
 io.sockets.on('connection', function(client) {
 
   client.on('join', function(name) {
+    users.push(name);
+    client.broadcast.emit('join', name);
+    client.emit('join', name);
+    client.set('name', name);
     console.log("User " + name + " has joined the room");
   });
 
