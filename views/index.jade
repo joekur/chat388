@@ -12,7 +12,8 @@ block content
   #chat_container
     ul#chat
 
-    form#message
+    form#chat_form
+      input#message(type='text', autocomplete='off')
 
   script(src='http://code.jquery.com/jquery-1.9.1.min.js')
   script(src='/socket.io/socket.io.js')

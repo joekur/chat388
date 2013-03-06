@@ -1,12 +1,16 @@
 server = io.connect('http://localhost:3000')
+my_name = null
 
 server.on 'connect', (data) ->
-  name = prompt("What is your name?")
-  server.emit('join', name)
-  addUser({name: name})
+  my_name = prompt("What is your name?")
+  server.emit('join', my_name)
+  addUser({name: my_name})
 
 server.on 'join', (data) ->
   addUser(data)
+
+server.on 'message', (data) ->
+  addMessage(data)
 
 server.on 'disconnect', (data) ->
   # remove from room
@@ -14,6 +18,16 @@ server.on 'disconnect', (data) ->
   $user.remove()
   # show that they left in chat
   addMessage({name: data.name, message: "has left the room."})
+
+$('#chat_form').submit ->
+  $input = $('#message')
+  msg = $input.val()
+  $input.val('')
+
+  server.emit('message', msg)
+  addMessage({name: my_name, message: msg})
+
+  return false
 
 addUser = (data) ->
   $('ul#users').append("<li data-id='#{data.id}'>#{data.name}</li>")

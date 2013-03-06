@@ -63,6 +63,14 @@ io.sockets.on('connection', function(client) {
     console.log("User " + name + " has joined the room");
   });
 
+  client.on('message', function(msg) {
+    client.broadcast.emit('message', {
+      message: msg,
+      name: clients[client.id].name
+    })
+    console.log("New message from user " + clients[client.id].name + ": " + msg);
+  });
+
   client.on('disconnect', function() {
     user = clients[client.id];
     client.broadcast.emit('disconnect', user);
