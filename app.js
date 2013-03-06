@@ -31,7 +31,8 @@ app.configure(function(){
     src: __dirname + '/coffee',
     dest: __dirname + '/public/javascripts',
     prefix: '/javascripts/',
-    force: true
+    force: true,
+    bare: true
   }))
   app.use(express.static(path.join(__dirname, 'public')));
 });
@@ -50,7 +51,7 @@ io.sockets.on('connection', function(client) {
 
   // send all current users
   for(var id in clients) {
-    client.emit('join', clients[id]);
+    client.emit('in room', clients[id]);
   }
 
   client.on('join', function(name) {
@@ -64,11 +65,13 @@ io.sockets.on('connection', function(client) {
   });
 
   client.on('message', function(msg) {
+    var user = clients[client.id];
     client.broadcast.emit('message', {
       message: msg,
-      name: clients[client.id].name
+      name: user.name,
+      user_id: user.id
     })
-    console.log("New message from user " + clients[client.id].name + ": " + msg);
+    console.log("New message from user " + user.name + ": " + msg);
   });
 
   client.on('disconnect', function() {
