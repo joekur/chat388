@@ -1,4 +1,4 @@
-server = io.connect('http://localhost:3000')
+server = io.connect('/')
 my_name = null
 last_message_user_id = null
 

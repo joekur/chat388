@@ -1,6 +1,6 @@
 var addMessage, addUser, last_message_user_id, my_name, server;
 
-server = io.connect('http://localhost:3000');
+server = io.connect('/');
 
 my_name = null;
 
