@@ -1,0 +1,1 @@
+A simple chat client using Node.js, Express and Socket.io.
