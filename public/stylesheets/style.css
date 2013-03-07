@@ -48,7 +48,7 @@ textarea:focus {
   bottom: 0;
   width: 200px;
   padding: 20px;
-  background: #b98383;
+  background: #5ec0a1;
 }
 #chat_container {
   position: absolute;
@@ -96,6 +96,9 @@ ul#chat {
 }
 #chat li.status .name {
   background: white;
+}
+#chat li.status .message {
+  color: #666;
 }
 #chat li.me .name {
   background: #cdefff;

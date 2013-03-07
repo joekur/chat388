@@ -35,10 +35,13 @@ $('#chat_form').submit ->
   return false
 
 addUser = (data) ->
-  $('ul#users').append("<li data-id='#{data.id}'>#{data.name}</li>")
+  $user = $("<li data-id='#{data.id}'></li>")
+  $user.text(data.name)
+  $('ul#users').append $user
 
 addMessage = (data) ->
-  $msg = $("<div class='message'>#{data.message}</div>")
+  $msg = $("<div class='message'></div>")
+  $msg.text(data.message)
   if last_message_user_id == data.user_id
     $("#chat li").last().find('.messages').append($msg)
   else
