@@ -23,8 +23,7 @@ if (process.env.NODE_ENV == 'production') {
     io.set("polling duration", 10);
   });
 
-  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-  var redis = require("redis").createClient(rtg.port, rtg.hostname);
+  var redis = require("redis-url").connect(process.env.REDISTOGO_URL);
 
 } else {
   var redis = require('redis').createClient();
