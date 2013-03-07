@@ -40,6 +40,7 @@ addUser = (data) ->
   $('ul#users').append $user
 
 addMessage = (data) ->
+  $chat = $("#chat")
   $msg = $("<div class='message'></div>")
   $msg.text(data.message)
   if last_message_user_id == data.user_id
@@ -49,5 +50,7 @@ addMessage = (data) ->
     $msg_container.find('.messages').append($msg)
     $msg_container.addClass('status') if data.status
     $msg_container.addClass('me') if data.user_id == server.socket.sessionid
-    $('ul#chat').append($msg_container)
+    $chat.append($msg_container)
   last_message_user_id = data.user_id
+
+  $chat.scrollTop $chat[0].scrollHeight

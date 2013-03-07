@@ -64,7 +64,8 @@ addUser = function(data) {
 };
 
 addMessage = function(data) {
-  var $msg, $msg_container;
+  var $chat, $msg, $msg_container;
+  $chat = $("#chat");
   $msg = $("<div class='message'></div>");
   $msg.text(data.message);
   if (last_message_user_id === data.user_id) {
@@ -78,7 +79,8 @@ addMessage = function(data) {
     if (data.user_id === server.socket.sessionid) {
       $msg_container.addClass('me');
     }
-    $('ul#chat').append($msg_container);
+    $chat.append($msg_container);
   }
-  return last_message_user_id = data.user_id;
+  last_message_user_id = data.user_id;
+  return $chat.scrollTop($chat[0].scrollHeight);
 };
