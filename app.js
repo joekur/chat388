@@ -15,6 +15,12 @@ var app = express();
 var server = http.createServer(app);
 var io = socket.listen(server);
 
+// configure for heroku
+io.configure(function() {
+  io.set("transports", ["xhr-polling"]);
+  io.set("polling duration", 10);
+});
+
 var clients = {};
 
 app.configure(function(){
