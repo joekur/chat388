@@ -15,11 +15,20 @@ var app = express();
 var server = http.createServer(app);
 var io = socket.listen(server);
 
-// configure for heroku
-io.configure(function() {
-  io.set("transports", ["xhr-polling"]);
-  io.set("polling duration", 10);
-});
+if (process.env.NODE_ENV == 'production') {
+  // configure for heroku
+
+  io.configure(function() {
+    io.set("transports", ["xhr-polling"]);
+    io.set("polling duration", 10);
+  });
+
+  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+  var redis = require("redis").createClient(rtg.port, rtg.hostname);
+
+} else {
+  var redis = require('redis').createClient();
+}
 
 var clients = {};
 
@@ -68,15 +77,26 @@ io.sockets.on('connection', function(client) {
     clients[client.id] = user_joined;
     client.broadcast.emit('join', user_joined);
     console.log("User " + name + " has joined the room");
+
+    // send last 10 messages
+    redis.lrange("messages", 0, 9, function(err, messages) {
+      messages = messages.reverse();
+      messages.forEach(function(message) {
+        message = JSON.parse(message);
+        client.emit('message', message);
+      });
+    });
   });
 
   client.on('message', function(msg) {
     var user = clients[client.id];
-    client.broadcast.emit('message', {
+    var data = {
       message: msg,
       name: user.name,
       user_id: user.id
-    })
+    };
+    redis.lpush("messages", JSON.stringify(data));
+    client.broadcast.emit('message', data);
     console.log("New message from user " + user.name + ": " + msg);
   });
 
