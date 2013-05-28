@@ -104,7 +104,7 @@ jQuery ->
     for pokemon, i in POKEMONS
       sprite_row = parseInt(i / 25)
       sprite_col = i % 25
-      icon = "<div class='smiley' style=\"background-position: -#{sprite_col*32}px -#{sprite_row*32}px\"></div>"
+      icon = "<div class='smiley' style=\"background-position: -#{sprite_col*32}px -#{sprite_row*32}px\" title='#{pokemon}'></div>"
       text = text.replace("(#{pokemon})", icon)
 
     $result = $("<div class='message'></div>")
