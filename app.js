@@ -61,6 +61,7 @@ server.listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
 
+
 io.sockets.on('connection', function(client) {
 
   // send all current users
@@ -77,14 +78,22 @@ io.sockets.on('connection', function(client) {
     client.broadcast.emit('join', user_joined);
     console.log("User " + name + " has joined the room");
 
-    // send last 10 messages
-    redis.lrange("messages", 0, 9, function(err, messages) {
-      messages = messages.reverse();
-      messages.forEach(function(message) {
-        message = JSON.parse(message);
-        client.emit('message', message);
+    redis.llen("messages", function(err, chat_length) {
+      var start_ind = chat_length - 10; // send 10 messages at a time
+      if (start_ind < 0) { start_ind = 0; }
+
+      redis.lrange("messages", start_ind, -1, function(err, messages) {
+        clients[client.id]['next_message_to_load'] = start_ind - 1;
+
+        var send_messages = [];
+        messages.forEach(function(msg) {
+          send_messages.push(JSON.parse(msg));
+        });
+
+        client.emit('old_messages', send_messages);
       });
     });
+    
   });
 
   client.on('message', function(msg) {
@@ -94,9 +103,13 @@ io.sockets.on('connection', function(client) {
       name: user.name,
       user_id: user.id
     };
-    redis.lpush("messages", JSON.stringify(data));
+    redis.rpush("messages", JSON.stringify(data));
     client.broadcast.emit('message', data);
     console.log("New message from user " + user.name + ": " + msg);
+  });
+
+  client.on('load_old_messages', function() {
+    
   });
 
   client.on('disconnect', function() {

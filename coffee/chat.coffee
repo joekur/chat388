@@ -20,6 +20,11 @@ server.on 'in room', (data) ->
 server.on 'message', (data) ->
   addMessage(data)
 
+server.on 'old_messages', (messages) ->
+  console.log messages
+  messages.forEach (message) ->
+    addMessage(message, {prepend: true})
+
 server.on 'disconnect', (data) ->
   # remove from room
   $user = $("ul#users li[data-id=#{data.id}]")
@@ -43,7 +48,8 @@ addUser = (data) ->
   $user.text(data.name)
   $('ul#users').append $user
 
-addMessage = (data) ->
+addMessage = (data, opts) ->
+  opts ||= {}
   $chat = $("#chat")
   $msg = $("<div class='message'></div>")
   $msg.text(data.message)
@@ -51,7 +57,11 @@ addMessage = (data) ->
     $("#chat li").last().find('.messages').append($msg)
   else
     $msg_container = $("<li><div class='name'>#{data.name}</div><div class='messages'></div></li>")
-    $msg_container.find('.messages').append($msg)
+    if opts['prepend']
+      console.log 'prepend'
+      $msg_container.find('.messages').prepend($msg)
+    else
+      $msg_container.find('.messages').append($msg)
     $msg_container.addClass('status') if data.status
     $msg_container.addClass('me') if data.user_id == server.socket.sessionid
     $chat.append($msg_container)

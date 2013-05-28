@@ -35,6 +35,15 @@ server.on('message', function(data) {
   return addMessage(data);
 });
 
+server.on('old_messages', function(messages) {
+  console.log(messages);
+  return messages.forEach(function(message) {
+    return addMessage(message, {
+      prepend: true
+    });
+  });
+});
+
 server.on('disconnect', function(data) {
   var $user;
   $user = $("ul#users li[data-id=" + data.id + "]");
@@ -70,8 +79,9 @@ addUser = function(data) {
   return $('ul#users').append($user);
 };
 
-addMessage = function(data) {
+addMessage = function(data, opts) {
   var $chat, $msg, $msg_container;
+  opts || (opts = {});
   $chat = $("#chat");
   $msg = $("<div class='message'></div>");
   $msg.text(data.message);
@@ -79,7 +89,12 @@ addMessage = function(data) {
     $("#chat li").last().find('.messages').append($msg);
   } else {
     $msg_container = $("<li><div class='name'>" + data.name + "</div><div class='messages'></div></li>");
-    $msg_container.find('.messages').append($msg);
+    if (opts['prepend']) {
+      console.log('prepend');
+      $msg_container.find('.messages').prepend($msg);
+    } else {
+      $msg_container.find('.messages').append($msg);
+    }
     if (data.status) {
       $msg_container.addClass('status');
     }
