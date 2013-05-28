@@ -61,7 +61,8 @@ input, textarea {
   bottom: 0;
   width: 200px;
   padding: 20px;
-  background: rgb(94, 192, 161);
+  background: #333;
+  color: white;
 }
 
 #chat_container {
@@ -123,9 +124,10 @@ ul#chat {
 
 }
 
-#load_old_messages {
-  padding: 3px;
+#chat #load_old_messages {
+  padding: 6px;
   text-align: center;
+  display: none;
 }
 
 #chat_form {
@@ -168,4 +170,10 @@ ul#chat {
   &:hover {
     background: white;
   }
+}
+
+#username {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }

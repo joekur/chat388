@@ -48,7 +48,8 @@ textarea:focus {
   bottom: 0;
   width: 200px;
   padding: 20px;
-  background: #5ec0a1;
+  background: #333;
+  color: white;
 }
 #chat_container {
   position: absolute;
@@ -107,9 +108,10 @@ ul#chat {
 #chat li.me {
   background: #f4fcff;
 }
-#load_old_messages {
-  padding: 3px;
+#chat #load_old_messages {
+  padding: 6px;
   text-align: center;
+  display: none;
 }
 #chat_form {
   position: absolute;
@@ -148,4 +150,9 @@ ul#chat {
 }
 #chat_form input[type=submit]:hover {
   background: white;
+}
+#username {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
