@@ -1,6 +1,6 @@
 
 jQuery(function() {
-  var addMessage, addUser, first_message_user_id, last_message_user_id, my_name, server;
+  var SPRITE_WIDTH, addMessage, addUser, first_message_user_id, last_message_user_id, my_name, renderMsg, server;
   server = io.connect('/');
   my_name = null;
   last_message_user_id = null;
@@ -70,6 +70,8 @@ jQuery(function() {
       name: my_name,
       user_id: server.socket.sessionid,
       message: msg
+    }, {
+      scroll: true
     });
     return false;
   });
@@ -83,12 +85,11 @@ jQuery(function() {
     $user.text(data.name);
     return $('ul#users').append($user);
   };
-  return addMessage = function(data, opts) {
+  addMessage = function(data, opts) {
     var $chat, $messages, $msg, $msg_container, add_to_ctr;
     opts || (opts = {});
     $chat = $("#chat");
-    $msg = $("<div class='message'></div>");
-    $msg.text(data.message);
+    $msg = renderMsg(data.message);
     add_to_ctr = opts['prepend'] ? first_message_user_id === data.user_id : last_message_user_id === data.user_id;
     if (add_to_ctr) {
       if (opts['prepend']) {
@@ -123,7 +124,21 @@ jQuery(function() {
       $messages.append($msg);
     }
     if (opts['scroll']) {
-      return $chat.scrollTop($chat[0].scrollHeight);
+      $chat.scrollTop($chat[0].scrollHeight);
+      return console.log('scroll');
     }
+  };
+  SPRITE_WIDTH = 25;
+  return renderMsg = function(text) {
+    var $result, i, icon, pokemon, sprite_col, sprite_row, _i, _len;
+    for (i = _i = 0, _len = POKEMONS.length; _i < _len; i = ++_i) {
+      pokemon = POKEMONS[i];
+      sprite_row = parseInt(i / 25);
+      sprite_col = i % 25;
+      icon = "<div class='smiley' style=\"background-position: -" + (sprite_col * 32) + "px -" + (sprite_row * 32) + "px\"></div>";
+      text = text.replace("(" + pokemon + ")", icon);
+    }
+    $result = $("<div class='message'></div>");
+    return $result.html(text);
   };
 });

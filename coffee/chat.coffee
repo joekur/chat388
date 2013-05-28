@@ -22,7 +22,7 @@ jQuery ->
     addUser(data)
 
   server.on 'message', (data) ->
-    addMessage(data, scroll: true)
+    addMessage(data, {scroll: true})
 
   server.on 'old_messages', (data) ->
     messages = data.messages.reverse()
@@ -48,7 +48,7 @@ jQuery ->
     $input.val('')
 
     server.emit('message', msg)
-    addMessage({name: my_name, user_id: server.socket.sessionid, message: msg})
+    addMessage({name: my_name, user_id: server.socket.sessionid, message: msg}, {scroll: true})
 
     return false
 
@@ -64,8 +64,7 @@ jQuery ->
   addMessage = (data, opts) ->
     opts ||= {}
     $chat = $("#chat")
-    $msg = $("<div class='message'></div>")
-    $msg.text(data.message)
+    $msg = renderMsg(data.message)
     add_to_ctr = if opts['prepend'] then (first_message_user_id == data.user_id) else (last_message_user_id == data.user_id)
     if add_to_ctr
       # add to existing container
@@ -94,4 +93,19 @@ jQuery ->
       last_message_user_id = data.user_id
       $messages.append($msg)
 
-    $chat.scrollTop $chat[0].scrollHeight if opts['scroll']
+    if opts['scroll']
+      $chat.scrollTop $chat[0].scrollHeight 
+      console.log 'scroll'
+
+
+  SPRITE_WIDTH = 25
+
+  renderMsg = (text) ->
+    for pokemon, i in POKEMONS
+      sprite_row = parseInt(i / 25)
+      sprite_col = i % 25
+      icon = "<div class='smiley' style=\"background-position: -#{sprite_col*32}px -#{sprite_row*32}px\"></div>"
+      text = text.replace("(#{pokemon})", icon)
+
+    $result = $("<div class='message'></div>")
+    $result.html(text)

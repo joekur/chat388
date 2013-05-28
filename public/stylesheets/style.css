@@ -91,7 +91,8 @@ ul#chat {
   text-align: right;
 }
 #chat li .message {
-  padding: 8px;
+  padding: 0 8px;
+  line-height: 32px;
 }
 #chat li .messages {
   margin-left: 165px;
