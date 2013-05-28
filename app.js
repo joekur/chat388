@@ -63,10 +63,14 @@ server.listen(app.get('port'), function(){
 
 
 function sendOldMessages(client, last_ind) {
-  var start_ind = last_ind - 5; // send 5 messages at a time
-  if (start_ind < 0) { 
+  var start_ind = last_ind - 9; // send 10 messages at a time
+  var end_of_history = false;
+  console.log(start_ind);
+  if (start_ind <= 0) { 
     // reached end of chat history
+    console.log('end of history');
     start_ind = 0;
+    end_of_history = true;
   }
 
   redis.lrange("messages", start_ind, last_ind, function(err, messages) {
@@ -79,7 +83,7 @@ function sendOldMessages(client, last_ind) {
     });
 
     // send to client
-    client.emit('old_messages', send_messages);
+    client.emit('old_messages', {messages: send_messages, end_of_history: end_of_history});
   });
 }
 
@@ -100,7 +104,7 @@ io.sockets.on('connection', function(client) {
     console.log("User " + name + " has joined the room");
 
     redis.llen("messages", function(err, chat_length) {
-      sendOldMessages(client, chat_length);
+      sendOldMessages(client, chat_length-1);
     });
     
   });

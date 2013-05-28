@@ -21,11 +21,13 @@ server.on 'in room', (data) ->
 server.on 'message', (data) ->
   addMessage(data)
 
-server.on 'old_messages', (messages) ->
-  console.log messages
-  messages = messages.reverse()
+server.on 'old_messages', (data) ->
+  messages = data.messages.reverse()
   messages.forEach (message) ->
     addMessage(message, {prepend: true})
+
+  if data.end_of_history
+    $('#load_old_messages').remove()
 
 server.on 'disconnect', (data) ->
   # remove from room
@@ -45,8 +47,9 @@ $('#chat_form').submit ->
 
   return false
 
-$('h1').click ->
+$('#load_old_messages a').click ->
   server.emit('load_old_messages')
+  return false
 
 addUser = (data) ->
   $user = $("<li data-id='#{data.id}'></li>")
@@ -62,16 +65,19 @@ addMessage = (data, opts) ->
   if add_to_ctr
     # add to existing container
     if opts['prepend']
-      $messages = $("#chat li").first().find('.messages')
+      $messages = $("#chat li.message-ctr").first().find('.messages')
     else
-      $messages = $("#chat li").last().find('.messages')
+      $messages = $("#chat li.message-ctr").last().find('.messages')
   else
     # create new user message container
-    $msg_container = $("<li><div class='name'>#{data.name}</div><div class='messages'></div></li>")
+    $msg_container = $("<li class='message-ctr'><div class='name'>#{data.name}</div><div class='messages'></div></li>")
     $msg_container.addClass('status') if data.status
     $msg_container.addClass('me') if data.user_id == server.socket.sessionid
     if opts['prepend']
-      $chat.prepend($msg_container)
+      if $("#load_old_messages").length > 0
+        $msg_container.insertAfter($("#load_old_messages"))
+      else
+        $chat.prepend($msg_container)
     else 
       $chat.append($msg_container)
     $messages = $msg_container.find('.messages')

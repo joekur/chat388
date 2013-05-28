@@ -107,6 +107,10 @@ ul#chat {
 #chat li.me {
   background: #f4fcff;
 }
+#load_old_messages {
+  padding: 3px;
+  text-align: center;
+}
 #chat_form {
   position: absolute;
   bottom: 0;
