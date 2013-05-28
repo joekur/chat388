@@ -7,7 +7,11 @@ my_name = null;
 last_message_user_id = null;
 
 server.on('connect', function(data) {
-  my_name = prompt("What is your name?");
+  my_name = Cookie.find('username');
+  if (_.isEmpty(my_name)) {
+    my_name = prompt("What is your name?");
+    Cookie.create('username', my_name);
+  }
   server.emit('join', my_name);
   return addUser({
     name: my_name
@@ -46,6 +50,9 @@ $('#chat_form').submit(function() {
   var $input, msg;
   $input = $('#message');
   msg = $input.val();
+  if (msg === '') {
+    return false;
+  }
   $input.val('');
   server.emit('message', msg);
   addMessage({

@@ -3,7 +3,10 @@ my_name = null
 last_message_user_id = null
 
 server.on 'connect', (data) ->
-  my_name = prompt("What is your name?")
+  my_name = Cookie.find('username')
+  if _.isEmpty(my_name)
+    my_name = prompt("What is your name?")
+    Cookie.create('username', my_name)
   server.emit('join', my_name)
   addUser({name: my_name})
 
@@ -27,6 +30,7 @@ server.on 'disconnect', (data) ->
 $('#chat_form').submit ->
   $input = $('#message')
   msg = $input.val()
+  return false if msg == ''
   $input.val('')
 
   server.emit('message', msg)
