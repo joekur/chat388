@@ -1,6 +1,7 @@
 server = io.connect('/')
 my_name = null
 last_message_user_id = null
+first_message_user_id = null
 
 server.on 'connect', (data) ->
   my_name = Cookie.find('username')
@@ -22,6 +23,7 @@ server.on 'message', (data) ->
 
 server.on 'old_messages', (messages) ->
   console.log messages
+  messages = messages.reverse()
   messages.forEach (message) ->
     addMessage(message, {prepend: true})
 
@@ -43,6 +45,9 @@ $('#chat_form').submit ->
 
   return false
 
+$('h1').click ->
+  server.emit('load_old_messages')
+
 addUser = (data) ->
   $user = $("<li data-id='#{data.id}'></li>")
   $user.text(data.name)
@@ -53,18 +58,29 @@ addMessage = (data, opts) ->
   $chat = $("#chat")
   $msg = $("<div class='message'></div>")
   $msg.text(data.message)
-  if last_message_user_id == data.user_id
-    $("#chat li").last().find('.messages').append($msg)
-  else
-    $msg_container = $("<li><div class='name'>#{data.name}</div><div class='messages'></div></li>")
+  add_to_ctr = if opts['prepend'] then (first_message_user_id == data.user_id) else (last_message_user_id == data.user_id)
+  if add_to_ctr
+    # add to existing container
     if opts['prepend']
-      console.log 'prepend'
-      $msg_container.find('.messages').prepend($msg)
+      $messages = $("#chat li").first().find('.messages')
     else
-      $msg_container.find('.messages').append($msg)
+      $messages = $("#chat li").last().find('.messages')
+  else
+    # create new user message container
+    $msg_container = $("<li><div class='name'>#{data.name}</div><div class='messages'></div></li>")
     $msg_container.addClass('status') if data.status
     $msg_container.addClass('me') if data.user_id == server.socket.sessionid
-    $chat.append($msg_container)
-  last_message_user_id = data.user_id
+    if opts['prepend']
+      $chat.prepend($msg_container)
+    else 
+      $chat.append($msg_container)
+    $messages = $msg_container.find('.messages')
+
+  if opts['prepend']
+    first_message_user_id = data.user_id
+    $messages.prepend($msg)
+  else
+    last_message_user_id = data.user_id
+    $messages.append($msg)
 
   $chat.scrollTop $chat[0].scrollHeight

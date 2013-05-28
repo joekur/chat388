@@ -1,10 +1,12 @@
-var addMessage, addUser, last_message_user_id, my_name, server;
+var addMessage, addUser, first_message_user_id, last_message_user_id, my_name, server;
 
 server = io.connect('/');
 
 my_name = null;
 
 last_message_user_id = null;
+
+first_message_user_id = null;
 
 server.on('connect', function(data) {
   my_name = Cookie.find('username');
@@ -37,6 +39,7 @@ server.on('message', function(data) {
 
 server.on('old_messages', function(messages) {
   console.log(messages);
+  messages = messages.reverse();
   return messages.forEach(function(message) {
     return addMessage(message, {
       prepend: true
@@ -72,6 +75,10 @@ $('#chat_form').submit(function() {
   return false;
 });
 
+$('h1').click(function() {
+  return server.emit('load_old_messages');
+});
+
 addUser = function(data) {
   var $user;
   $user = $("<li data-id='" + data.id + "'></li>");
@@ -80,29 +87,39 @@ addUser = function(data) {
 };
 
 addMessage = function(data, opts) {
-  var $chat, $msg, $msg_container;
+  var $chat, $messages, $msg, $msg_container, add_to_ctr;
   opts || (opts = {});
   $chat = $("#chat");
   $msg = $("<div class='message'></div>");
   $msg.text(data.message);
-  if (last_message_user_id === data.user_id) {
-    $("#chat li").last().find('.messages').append($msg);
+  add_to_ctr = opts['prepend'] ? first_message_user_id === data.user_id : last_message_user_id === data.user_id;
+  if (add_to_ctr) {
+    if (opts['prepend']) {
+      $messages = $("#chat li").first().find('.messages');
+    } else {
+      $messages = $("#chat li").last().find('.messages');
+    }
   } else {
     $msg_container = $("<li><div class='name'>" + data.name + "</div><div class='messages'></div></li>");
-    if (opts['prepend']) {
-      console.log('prepend');
-      $msg_container.find('.messages').prepend($msg);
-    } else {
-      $msg_container.find('.messages').append($msg);
-    }
     if (data.status) {
       $msg_container.addClass('status');
     }
     if (data.user_id === server.socket.sessionid) {
       $msg_container.addClass('me');
     }
-    $chat.append($msg_container);
+    if (opts['prepend']) {
+      $chat.prepend($msg_container);
+    } else {
+      $chat.append($msg_container);
+    }
+    $messages = $msg_container.find('.messages');
   }
-  last_message_user_id = data.user_id;
+  if (opts['prepend']) {
+    first_message_user_id = data.user_id;
+    $messages.prepend($msg);
+  } else {
+    last_message_user_id = data.user_id;
+    $messages.append($msg);
+  }
   return $chat.scrollTop($chat[0].scrollHeight);
 };

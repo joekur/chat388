@@ -62,6 +62,27 @@ server.listen(app.get('port'), function(){
 });
 
 
+function sendOldMessages(client, last_ind) {
+  var start_ind = last_ind - 5; // send 5 messages at a time
+  if (start_ind < 0) { 
+    // reached end of chat history
+    start_ind = 0;
+  }
+
+  redis.lrange("messages", start_ind, last_ind, function(err, messages) {
+    clients[client.id]['next_message_to_load'] = start_ind - 1;
+
+    // conver to JSON
+    var send_messages = [];
+    messages.forEach(function(msg) {
+      send_messages.push(JSON.parse(msg));
+    });
+
+    // send to client
+    client.emit('old_messages', send_messages);
+  });
+}
+
 io.sockets.on('connection', function(client) {
 
   // send all current users
@@ -79,19 +100,7 @@ io.sockets.on('connection', function(client) {
     console.log("User " + name + " has joined the room");
 
     redis.llen("messages", function(err, chat_length) {
-      var start_ind = chat_length - 10; // send 10 messages at a time
-      if (start_ind < 0) { start_ind = 0; }
-
-      redis.lrange("messages", start_ind, -1, function(err, messages) {
-        clients[client.id]['next_message_to_load'] = start_ind - 1;
-
-        var send_messages = [];
-        messages.forEach(function(msg) {
-          send_messages.push(JSON.parse(msg));
-        });
-
-        client.emit('old_messages', send_messages);
-      });
+      sendOldMessages(client, chat_length);
     });
     
   });
@@ -109,7 +118,9 @@ io.sockets.on('connection', function(client) {
   });
 
   client.on('load_old_messages', function() {
-    
+    var next_message_to_load = clients[client.id]['next_message_to_load'];
+    if (next_message_to_load < 0) return;
+    sendOldMessages(client, next_message_to_load);
   });
 
   client.on('disconnect', function() {
