@@ -29,7 +29,9 @@ jQuery(function() {
     return addUser(data);
   });
   server.on('message', function(data) {
-    return addMessage(data);
+    return addMessage(data, {
+      scroll: true
+    });
   });
   server.on('old_messages', function(data) {
     var messages;
@@ -120,6 +122,8 @@ jQuery(function() {
       last_message_user_id = data.user_id;
       $messages.append($msg);
     }
-    return $chat.scrollTop($chat[0].scrollHeight);
+    if (opts['scroll']) {
+      return $chat.scrollTop($chat[0].scrollHeight);
+    }
   };
 });

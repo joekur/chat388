@@ -22,7 +22,7 @@ jQuery ->
     addUser(data)
 
   server.on 'message', (data) ->
-    addMessage(data)
+    addMessage(data, scroll: true)
 
   server.on 'old_messages', (data) ->
     messages = data.messages.reverse()
@@ -94,4 +94,4 @@ jQuery ->
       last_message_user_id = data.user_id
       $messages.append($msg)
 
-    $chat.scrollTop $chat[0].scrollHeight
+    $chat.scrollTop $chat[0].scrollHeight if opts['scroll']
