@@ -101,6 +101,12 @@ jQuery ->
   SPRITE_WIDTH = 25
 
   renderMsg = (text) ->
+    text = text.replace(/&/g, "&amp;")
+               .replace(/</g, "&lt;")
+               .replace(/>/g, "&gt;")
+               .replace(/"/g, "&quot;")
+               .replace(/'/g, "&#039;")
+
     for pokemon, i in POKEMONS
       sprite_row = parseInt(i / 25)
       sprite_col = i % 25

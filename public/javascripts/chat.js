@@ -131,6 +131,7 @@ jQuery(function() {
   SPRITE_WIDTH = 25;
   return renderMsg = function(text) {
     var $result, i, icon, pokemon, sprite_col, sprite_row, _i, _len;
+    text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     for (i = _i = 0, _len = POKEMONS.length; _i < _len; i = ++_i) {
       pokemon = POKEMONS[i];
       sprite_row = parseInt(i / 25);
