@@ -95,18 +95,33 @@ jQuery ->
 
     if opts['scroll']
       $chat.scrollTop $chat[0].scrollHeight 
-      console.log 'scroll'
 
 
   SPRITE_WIDTH = 25
 
   renderMsg = (text) ->
+    # escape dangerous characters
     text = text.replace(/&/g, "&amp;")
                .replace(/</g, "&lt;")
                .replace(/>/g, "&gt;")
                .replace(/"/g, "&quot;")
                .replace(/'/g, "&#039;")
 
+    # add links
+    # URLs starting with http://, https://, or ftp://
+    replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim
+    text = text.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>')
+
+    # URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+    replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim
+    text = text.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>')
+
+    # Change email addresses to mailto:: links.
+    replacePattern3 = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim
+    text = text.replace(replacePattern3, '<a href="mailto:$1" target="_blank">$1</a>')
+
+
+    # pokemon items
     for pokemon, i in POKEMONS
       sprite_row = parseInt(i / 25)
       sprite_col = i % 25
