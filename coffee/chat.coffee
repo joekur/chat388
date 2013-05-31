@@ -124,11 +124,17 @@ jQuery ->
                .replace(/"/g, "&quot;")
                .replace(/'/g, "&#039;")
 
-    # imageFormats = ['gif', 'png', 'jpg', 'jpeg', 'bmp']
     imagePattern = /(^(https?:\/\/|www\.)[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|](\.gif|\.png|\.jpg|\.jpeg|\.bmp)$)/i
+    videoPattern = /(http:\/\/|www.|http:\/\/www.)youtube.com\/watch\?v\=(.+)/
+
     if text.match(imagePattern)
       # insert image
       text = "<img src='#{RegExp.$1}' title='#{RegExp.$1}' />"
+
+    if text.match(videoPattern)
+      # insert youtube video
+      src = "https://www.youtube.com/embed/#{RegExp.$2}"
+      text = "<iframe src='#{src}' class='video youtube' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>"
 
     else
       # add links

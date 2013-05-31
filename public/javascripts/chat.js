@@ -97,7 +97,7 @@ jQuery(function() {
     var title;
     title = "Chat 388";
     if (unread_messages > 0) {
-      title += "(" + unread_messages + ")";
+      title += " (" + unread_messages + ")";
     }
     return document.title = title;
   };
@@ -151,11 +151,16 @@ jQuery(function() {
   };
   SPRITE_WIDTH = 25;
   return renderMsg = function(text) {
-    var $result, i, icon, imagePattern, pokemon, replacePattern1, replacePattern2, replacePattern3, sprite_col, sprite_row, _i, _len;
+    var $result, i, icon, imagePattern, pokemon, replacePattern1, replacePattern2, replacePattern3, sprite_col, sprite_row, src, videoPattern, _i, _len;
     text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     imagePattern = /(^(https?:\/\/|www\.)[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|](\.gif|\.png|\.jpg|\.jpeg|\.bmp)$)/i;
+    videoPattern = /(http:\/\/|www.|http:\/\/www.)youtube.com\/watch\?v\=(.+)/;
     if (text.match(imagePattern)) {
       text = "<img src='" + RegExp.$1 + "' title='" + RegExp.$1 + "' />";
+    }
+    if (text.match(videoPattern)) {
+      src = "https://www.youtube.com/embed/" + RegExp.$2;
+      text = "<iframe src='" + src + "' class='video youtube' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>";
     } else {
       replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
       text = text.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');

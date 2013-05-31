@@ -98,6 +98,12 @@ ul#chat {
   display: block;
   padding: 8px 0;
 }
+#chat li .message iframe.video {
+  display: block;
+  padding: 8px 0;
+  width: 500px;
+  height: 282px;
+}
 #chat li .messages {
   margin-left: 165px;
 }
