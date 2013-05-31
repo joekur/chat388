@@ -129,20 +129,25 @@ jQuery(function() {
   };
   SPRITE_WIDTH = 25;
   return renderMsg = function(text) {
-    var $result, i, icon, pokemon, replacePattern1, replacePattern2, replacePattern3, sprite_col, sprite_row, _i, _len;
+    var $result, i, icon, imagePattern, pokemon, replacePattern1, replacePattern2, replacePattern3, sprite_col, sprite_row, _i, _len;
     text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-    replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-    text = text.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
-    replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-    text = text.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
-    replacePattern3 = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim;
-    text = text.replace(replacePattern3, '<a href="mailto:$1" target="_blank">$1</a>');
-    for (i = _i = 0, _len = POKEMONS.length; _i < _len; i = ++_i) {
-      pokemon = POKEMONS[i];
-      sprite_row = parseInt(i / 25);
-      sprite_col = i % 25;
-      icon = "<div class='smiley' style=\"background-position: -" + (sprite_col * 32) + "px -" + (sprite_row * 32) + "px\" title='" + pokemon + "'></div>";
-      text = text.replace("(" + pokemon + ")", icon);
+    imagePattern = /(^(https?:\/\/|www\.)[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|](\.gif|\.png|\.jpg|\.jpeg|\.bmp)$)/i;
+    if (text.match(imagePattern)) {
+      text = "<img src='" + RegExp.$1 + "' title='" + RegExp.$1 + "' />";
+    } else {
+      replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+      text = text.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+      replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+      text = text.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+      replacePattern3 = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim;
+      text = text.replace(replacePattern3, '<a href="mailto:$1" target="_blank">$1</a>');
+      for (i = _i = 0, _len = POKEMONS.length; _i < _len; i = ++_i) {
+        pokemon = POKEMONS[i];
+        sprite_row = parseInt(i / 25);
+        sprite_col = i % 25;
+        icon = "<div class='smiley' style=\"background-position: -" + (sprite_col * 32) + "px -" + (sprite_row * 32) + "px\" title='" + pokemon + "'></div>";
+        text = text.replace("(" + pokemon + ")", icon);
+      }
     }
     $result = $("<div class='message'></div>");
     return $result.html(text);

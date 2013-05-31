@@ -107,26 +107,33 @@ jQuery ->
                .replace(/"/g, "&quot;")
                .replace(/'/g, "&#039;")
 
-    # add links
-    # URLs starting with http://, https://, or ftp://
-    replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim
-    text = text.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>')
+    # imageFormats = ['gif', 'png', 'jpg', 'jpeg', 'bmp']
+    imagePattern = /(^(https?:\/\/|www\.)[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|](\.gif|\.png|\.jpg|\.jpeg|\.bmp)$)/i
+    if text.match(imagePattern)
+      # insert image
+      text = "<img src='#{RegExp.$1}' title='#{RegExp.$1}' />"
 
-    # URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-    replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim
-    text = text.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>')
+    else
+      # add links
+      # URLs starting with http://, https://, or ftp://
+      replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim
+      text = text.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>')
 
-    # Change email addresses to mailto:: links.
-    replacePattern3 = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim
-    text = text.replace(replacePattern3, '<a href="mailto:$1" target="_blank">$1</a>')
+      # URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+      replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim
+      text = text.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>')
+
+      # Change email addresses to mailto:: links.
+      replacePattern3 = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim
+      text = text.replace(replacePattern3, '<a href="mailto:$1" target="_blank">$1</a>')
 
 
-    # pokemon items
-    for pokemon, i in POKEMONS
-      sprite_row = parseInt(i / 25)
-      sprite_col = i % 25
-      icon = "<div class='smiley' style=\"background-position: -#{sprite_col*32}px -#{sprite_row*32}px\" title='#{pokemon}'></div>"
-      text = text.replace("(#{pokemon})", icon)
+      # pokemon items
+      for pokemon, i in POKEMONS
+        sprite_row = parseInt(i / 25)
+        sprite_col = i % 25
+        icon = "<div class='smiley' style=\"background-position: -#{sprite_col*32}px -#{sprite_row*32}px\" title='#{pokemon}'></div>"
+        text = text.replace("(#{pokemon})", icon)
 
     $result = $("<div class='message'></div>")
     $result.html(text)

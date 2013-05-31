@@ -94,6 +94,10 @@ ul#chat {
   padding: 0 8px;
   line-height: 32px;
 }
+#chat li .message img {
+  display: block;
+  padding: 8px 0;
+}
 #chat li .messages {
   margin-left: 165px;
 }
@@ -156,4 +160,13 @@ ul#chat {
   position: absolute;
   top: 20px;
   right: 20px;
+}
+.smiley {
+  background: url('/images/pokemon_sprite.png');
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  top: -4px;
 }
