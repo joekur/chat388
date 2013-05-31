@@ -1,10 +1,12 @@
 
 jQuery(function() {
-  var SPRITE_WIDTH, addMessage, addUser, first_message_user_id, last_message_user_id, my_name, renderMsg, server;
+  var SPRITE_WIDTH, addMessage, addUser, first_message_user_id, last_message_user_id, my_name, renderMsg, server, unread_messages, updateTitleStatus;
   server = io.connect('/');
   my_name = null;
   last_message_user_id = null;
   first_message_user_id = null;
+  window.active = true;
+  unread_messages = 0;
   server.on('connect', function(data) {
     my_name = Cookie.find('username');
     if (_.isEmpty(my_name)) {
@@ -29,9 +31,13 @@ jQuery(function() {
     return addUser(data);
   });
   server.on('message', function(data) {
-    return addMessage(data, {
+    addMessage(data, {
       scroll: true
     });
+    if (!window.active) {
+      unread_messages += 1;
+    }
+    return updateTitleStatus();
   });
   server.on('old_messages', function(data) {
     var messages;
@@ -79,6 +85,22 @@ jQuery(function() {
     server.emit('load_old_messages');
     return false;
   });
+  $(window).focus(function() {
+    window.active = true;
+    unread_messages = 0;
+    return updateTitleStatus();
+  });
+  $(window).blur(function() {
+    return window.active = false;
+  });
+  updateTitleStatus = function() {
+    var title;
+    title = "Chat 388";
+    if (unread_messages > 0) {
+      title += "(" + unread_messages + ")";
+    }
+    return document.title = title;
+  };
   addUser = function(data) {
     var $user;
     $user = $("<li data-id='" + data.id + "'></li>");

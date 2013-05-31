@@ -4,6 +4,8 @@ jQuery ->
   my_name = null
   last_message_user_id = null
   first_message_user_id = null
+  window.active = true
+  unread_messages = 0
 
   server.on 'connect', (data) ->
     my_name = Cookie.find('username')
@@ -23,6 +25,8 @@ jQuery ->
 
   server.on 'message', (data) ->
     addMessage(data, {scroll: true})
+    unread_messages += 1 if !window.active
+    updateTitleStatus()
 
   server.on 'old_messages', (data) ->
     messages = data.messages.reverse()
@@ -55,6 +59,19 @@ jQuery ->
   $('#load_old_messages a').click ->
     server.emit('load_old_messages')
     return false
+
+  $(window).focus ->
+    window.active = true
+    unread_messages = 0
+    updateTitleStatus()
+
+  $(window).blur ->
+    window.active = false
+
+  updateTitleStatus = ->
+    title = "Chat 388"
+    title += " (#{unread_messages})" if unread_messages > 0
+    document.title = title
 
   addUser = (data) ->
     $user = $("<li data-id='#{data.id}'></li>")
