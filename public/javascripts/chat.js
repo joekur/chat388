@@ -157,8 +157,7 @@ jQuery(function() {
     videoPattern = /(http:\/\/|www.|http:\/\/www.)youtube.com\/watch\?v\=(.+)/;
     if (text.match(imagePattern)) {
       text = "<img src='" + RegExp.$1 + "' title='" + RegExp.$1 + "' />";
-    }
-    if (text.match(videoPattern)) {
+    } else if (text.match(videoPattern)) {
       src = "https://www.youtube.com/embed/" + RegExp.$2;
       text = "<iframe src='" + src + "' class='video youtube' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>";
     } else {
