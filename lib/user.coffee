@@ -45,5 +45,8 @@ User.joinRoom = (client, name) ->
 User.whosInRoom = ->
   user_store
 
+User.clearRoom = ->
+  user_store = {}
+
 
 module.exports = User

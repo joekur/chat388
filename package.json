@@ -17,7 +17,8 @@
   },
   "devDependencies": {
     "mocha": "1.14.x",
-    "chai": "*"
+    "chai": "*",
+    "socket.io-client": "*"
   },
   "engines": {
     "node": "0.8.x",
