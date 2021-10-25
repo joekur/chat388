@@ -1,4 +1,5 @@
 {
   "extends": ["config:base", ":preserveSemverRanges"],
-  "labels": ["dep-update"]
+  "labels": ["dep-update"],
+  "rangeStrategy": "bump"
 }
