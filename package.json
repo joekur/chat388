@@ -10,13 +10,13 @@
     "jade": "*",
     "less-middleware": "*",
     "socket.io": "~0.9.13",
-    "coffee-script": "~1.6.1",
-    "connect-coffee-script": "~0.1.1",
-    "redis": "0.8.x",
+    "coffee-script": "1.6.3",
+    "connect-coffee-script": "0.1.8",
+    "redis": "0.8.6",
     "redis-url": "0.1.0"
   },
   "devDependencies": {
-    "mocha": "1.14.x",
+    "mocha": "1.14.0",
     "chai": "*",
     "socket.io-client": "*"
   },
