@@ -21,7 +21,7 @@
     "socket.io-client": "*"
   },
   "engines": {
-    "node": "0.8.x",
+    "node": "16.17.x",
     "npm": "1.1.x"
   }
 }
