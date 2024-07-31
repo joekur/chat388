@@ -12,7 +12,7 @@
     "socket.io": "~0.9.13",
     "coffee-script": "~1.6.1",
     "connect-coffee-script": "~0.1.1",
-    "redis": "0.8.x",
+    "redis": "4.7.x",
     "redis-url": "0.1.0"
   },
   "devDependencies": {
