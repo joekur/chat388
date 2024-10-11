@@ -9,7 +9,7 @@
     "express": "3.1.0",
     "jade": "*",
     "less-middleware": "*",
-    "socket.io": "~0.9.13",
+    "socket.io": "~2.5.1",
     "coffee-script": "~1.6.1",
     "connect-coffee-script": "~0.1.1",
     "redis": "0.8.x",
